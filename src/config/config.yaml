@@ -1,0 +1,56 @@
+project:
+  name: vocal_guard
+  seed: 42
+
+audio:
+  sample_rate: 16000
+  window_duration: 4.0
+  hop_duration: 4.0
+  mono: true
+  normalize: true
+  trim_silence: true
+
+labels:
+  stress: 1
+  non_stress: 0
+
+emotion_mapping:
+  neutral: 0
+  calm: 0
+  happy: 0
+  sad: 0
+  angry: 1
+  fearful: 1
+  disgust: 1
+  surprised: null # excluded
+
+features:
+  mfcc:
+    n_mfcc: 13
+    use_delta: true
+    use_delta_delta: true
+    include_energy: true
+    n_fft: 400
+    hop_length: 160
+
+training:
+  batch_size: 32
+  epochs: 30
+  learning_rate: 0.001
+
+evaluation:
+  metrics: [precision, recall, f1]
+  threshold: 0.5
+
+splits:
+  train: 0.7
+  val: 0.15
+  test: 0.15
+  speaker_independent: true
+
+paths:
+  raw_data: data/raw
+  processed_data: data/processed
+  features: data/features
+  splits: data/splits
+  logs: logs/
