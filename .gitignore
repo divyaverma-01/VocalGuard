@@ -5,6 +5,7 @@ __pycache__/
 data/raw/
 data/processed/*
 !data/processed/metadata.csv
+!data/processed/windows.csv
 data/features/
 logs/
 experiments/
