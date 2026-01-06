@@ -1,13 +1,29 @@
+# Python Environment
 venv/
 __pycache__/
 *.pyc
+
+# Jupyter / Notebooks
 .ipynb_checkpoints/
+
+# Dataset (Large / Generated)
 data/raw/
+data/features/
+
+# Processed data (keep metadata only)
 data/processed/*
 !data/processed/metadata.csv
 !data/processed/windows.csv
-data/features/
-logs/
-experiments/
+
+# OS / System Files
 .DS_Store
 */.DS_Store
+
+# Training Outputs
+checkpoints/
+outputs/
+logs/
+experiments/
+
+# IDE
+.vscode/
