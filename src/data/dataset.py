@@ -7,8 +7,12 @@ from src.features.mfcc import extract_mfcc
 
 
 class StressDataset(Dataset):
-    def __init__(self, windows_csv, sr=16000):
-        self.df = pd.read_csv(windows_csv)
+    def __init__(self, data, sr=16000):
+        if isinstance(data, str):
+            self.df = pd.read_csv(data)
+        else:
+            self.df = data.reset_index(drop=True)
+            
         self.sr = sr
 
     def __len__(self):
