@@ -14,6 +14,7 @@ data/features/
 data/processed/*
 !data/processed/metadata.csv
 !data/processed/windows.csv
+!data/processed/sequences.csv
 
 # OS / System Files
 .DS_Store
