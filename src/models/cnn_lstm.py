@@ -42,6 +42,6 @@ class CNNLSTMStressClassifier(nn.Module):
         # Last layer's final hidden state
         h_last = h_n[-1]             # (B, hidden_dim)
 
-        out = torch.sigmoid(self.fc(h_last))
+        out = self.fc(h_last)
 
         return out.squeeze(1)
