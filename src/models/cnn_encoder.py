@@ -1,5 +1,4 @@
 import torch.nn as nn
-import torch.nn.functional as F
 
 class CNNEncoder(nn.Module):
     """
@@ -8,26 +7,36 @@ class CNNEncoder(nn.Module):
     Output: (batch, 128)
     """
 
-    def __init__(self):
+    def __init__(self, dropout=0.3):
         super().__init__()
 
-        # Convolution
-        self.conv1 = nn.Conv2d(3, 16, kernel_size=3, padding=1)
-        self.conv2 = nn.Conv2d(16, 32, kernel_size=3, padding=1)
-        self.conv3 = nn.Conv2d(32, 64, kernel_size=3, padding=1)
+        self.conv_block1 = nn.Sequential(
+            nn.Conv2d(3, 32, kernel_size=3, padding=1),
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
+            nn.Dropout2d(dropout),
+            nn.MaxPool2d(2)   # (13x128) → (6x64)
+        )
 
-        # Max Pooling
-        self.pool = nn.MaxPool2d(2)
+        self.conv_block2 = nn.Sequential(
+            nn.Conv2d(32, 64, kernel_size=3, padding=1),
+            nn.BatchNorm2d(64),
+            nn.ReLU(),
+            nn.Dropout2d(dropout),
+            nn.MaxPool2d(2)   # (6x64) → (3x32)
+        )
 
-        # Dense layer
-        self.fc = nn.Linear(64 * 3 * 32, 128)
+        self.conv_block3 = nn.Sequential(
+            nn.Conv2d(64, 128, kernel_size=3, padding=1),
+            nn.BatchNorm2d(128),
+            nn.ReLU(),
+            nn.Dropout2d(dropout),
+            nn.AdaptiveAvgPool2d((1, 1))  # → (1x1)
+        )
 
     def forward(self, x):
-        x = self.pool(F.relu(self.conv1(x)))
-        x = self.pool(F.relu(self.conv2(x)))
-        x = F.relu(self.conv3(x))
+        x = self.conv_block1(x)
+        x = self.conv_block2(x)
+        x = self.conv_block3(x)
+        return x.view(x.size(0), -1)  # (B, 128)
 
-        x = x.view(x.size(0), -1)
-        x = self.fc(x)
-
-        return x  # (batch, 128)
