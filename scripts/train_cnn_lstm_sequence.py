@@ -96,7 +96,7 @@ def main():
                     "optimizer_state": optimizer.state_dict(),
                     "val_loss": val_loss,
                 },
-                "checkpoints/cnn_lstm_best.pt",
+                "checkpoints/cnn_lstm_sequence_best.pt",
             )
             print("✔ Saved new best model")
 
