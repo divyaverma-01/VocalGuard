@@ -10,6 +10,20 @@ def extract_utterance_id(path):
     fname = Path(path).stem
     return fname.replace("_win0", "")
 
+def compute_escalation_label(labels):
+    """
+    Escalation = 1 if stress appears after non-stress.
+    labels: List[int] (e.g., [0, 0, 1])
+    """
+    seen_non_stress = False
+
+    for l in labels :
+        if l == 0:
+            seen_non_stress = True
+        elif l == 1 and seen_non_stress :
+            return 1
+    
+    return 0
 
 def build_sequences(windows_csv: str, output_csv: str):
     df = pd.read_csv(windows_csv)
@@ -36,6 +50,8 @@ def build_sequences(windows_csv: str, output_csv: str):
 
             sequence_label = int(max(labels))
 
+            escalation_label = compute_escalation_label(labels)
+
             sequences.append({
                 "sequence_id": f"seq_{seq_counter:06d}",
                 "speaker_id": speaker_id,
@@ -44,6 +60,7 @@ def build_sequences(windows_csv: str, output_csv: str):
                 "window_files": json.dumps(window_files),
                 "labels": json.dumps(labels),
                 "sequence_label": sequence_label,
+                "escalation_label": escalation_label,
                 "split": split,
             })
 

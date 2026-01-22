@@ -12,11 +12,16 @@ class SequenceDataset(Dataset):
     Each item = sequence of K MFCC windows.
     """
 
-    def __init__(self, sequences_csv: str, split: str):
+    def __init__(self, sequences_csv: str, split: str, target_mode="sequence"):
         self.df = pd.read_csv(sequences_csv)
         self.df = self.df[self.df["split"] == split].reset_index(drop=True)
 
         self.split = split
+        self.target_mode = target_mode
+
+        assert self.target_mode in ["sequence", "escalation"], \
+        f"Invalid target_mode: {self.target_mode}"
+
 
     def __len__(self):
         return len(self.df)
@@ -40,7 +45,11 @@ class SequenceDataset(Dataset):
 
         window_files = json.loads(row["window_files"])
         labels = json.loads(row["labels"])
-        sequence_label = int(row["sequence_label"])
+        
+        if self.target_mode == "sequence":
+            target = int(row["sequence_label"])
+        else:
+            target = int(row["escalation_label"])
 
         features = []
 
@@ -51,6 +60,6 @@ class SequenceDataset(Dataset):
         # Shape: (K, 3, 13, 128)
         X_seq = torch.stack(features, dim=0)
 
-        y = torch.tensor(sequence_label, dtype=torch.long)
+        y = torch.tensor(target, dtype=torch.long)
 
         return X_seq, y
