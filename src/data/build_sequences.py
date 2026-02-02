@@ -12,17 +12,21 @@ def extract_utterance_id(path):
 
 def compute_escalation_label(labels):
     """
-    Escalation = 1 if stress appears after non-stress.
+    Late-onset sustained stress escalation.
     labels: List[int] (e.g., [0, 0, 1])
     """
-    seen_non_stress = False
+    K = len(labels)
 
-    for l in labels :
-        if l == 0:
-            seen_non_stress = True
-        elif l == 1 and seen_non_stress :
+    # Need at least 2 windows to talk about "sustained"
+    if K < 2:
+        return 0
+
+    # Late-onset sustained stress
+    # Current dataset(RAVDESS) has K=3
+    if labels[-1] == 1 and labels[-2] == 1:
+        if sum(labels[:-2]) < len(labels[:-2]):  # at least one calm earlier
             return 1
-    
+
     return 0
 
 def build_sequences(windows_csv: str, output_csv: str):
@@ -74,6 +78,7 @@ def build_sequences(windows_csv: str, output_csv: str):
     print(f"✅ Built {len(seq_df)} sequences")
     print(seq_df["split"].value_counts())
     print(seq_df["sequence_label"].value_counts())
+    print(seq_df["escalation_label"].value_counts())
 
     return seq_df
 
