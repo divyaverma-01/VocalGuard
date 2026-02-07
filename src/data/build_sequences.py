@@ -2,7 +2,7 @@ import pandas as pd
 import json
 from pathlib import Path
 
-SEQUENCE_LENGTH = 3   # K
+SEQUENCE_LENGTH = 4   # K
 STRIDE = 1            # overlapping sequences
 
 
@@ -13,21 +13,18 @@ def extract_utterance_id(path):
 def compute_escalation_label(labels):
     """
     Late-onset sustained stress escalation.
-    labels: List[int] (e.g., [0, 0, 1])
+    K >= 4
     """
     K = len(labels)
 
-    # Need at least 2 windows to talk about "sustained"
-    if K < 2:
-        return 0
-
-    # Late-onset sustained stress
-    # Current dataset(RAVDESS) has K=3
+    # Require last two windows stressed
     if labels[-1] == 1 and labels[-2] == 1:
-        if sum(labels[:-2]) < len(labels[:-2]):  # at least one calm earlier
+        # At least one calm earlier
+        if 0 in labels[:-2]:
             return 1
 
     return 0
+
 
 def build_sequences(windows_csv: str, output_csv: str):
     df = pd.read_csv(windows_csv)

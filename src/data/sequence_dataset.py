@@ -15,6 +15,7 @@ class SequenceDataset(Dataset):
     def __init__(self, sequences_csv: str, split: str, target_mode="sequence"):
         self.df = pd.read_csv(sequences_csv)
         self.df = self.df[self.df["split"] == split].reset_index(drop=True)
+        self.escalation_labels = self.df["escalation_label"].tolist()
 
         self.split = split
         self.target_mode = target_mode
