@@ -62,7 +62,7 @@ def main():
 
     y_true, y_pred, y_prob = evaluate(model, test_loader, device)
 
-    os.makedirs("outputs/v2", exist_ok=True)
+    os.makedirs("outputs", exist_ok=True)
 
     # Metrics
     report = classification_report(
@@ -76,10 +76,10 @@ def main():
     cm = confusion_matrix(y_true, y_pred)
 
     # Save outputs
-    with open("outputs/v2/classification_report.txt", "w") as f:
+    with open("outputs/classification_report.txt", "w") as f:
         f.write(report)
 
-    with open("outputs/v2/test_metrics.json", "w") as f:
+    with open("outputs/test_metrics.json", "w") as f:
         json.dump(
             {"accuracy": acc},
             f,
@@ -98,13 +98,13 @@ def main():
 
     plt.xlabel("Predicted")
     plt.ylabel("True")
-    plt.title("CNN-LSTM Confusion Matrix (v2)")
+    plt.title("CNN-LSTM Confusion Matrix")
     plt.tight_layout()
-    plt.savefig("outputs/v2/confusion_matrix.png")
+    plt.savefig("outputs/confusion_matrix.png")
     plt.close()
 
 
-    print("=== CNN-LSTM Test Results (v2) ===")
+    print("=== CNN-LSTM Test Results ===")
     print(report)
     print("Accuracy:", acc)
     print("Confusion Matrix:\n", cm)
